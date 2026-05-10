@@ -3,32 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Odaklanma İstasyonu | Profesyonel Pomodoro & Planlayıcı</title>
-    <meta name="description" content="Kişiselleştirilebilir odaklanma ve pomodoro istasyonu. Evren temalı çalışma alanı, bahar temalı mola ekranı ve anlık namaz vakitleri takibi.">
-    <meta name="keywords" content="pomodoro, odaklanma, çalışma teknikleri, verimlilik araçları, namaz vakitleri, online zamanlayıcı, derin çalışma">
-
+    <title>Odaklanma İstasyonu</title>
     <style>
-        :root { --primary-bg: #001f3f; --overlay: rgba(0, 0, 0, 0.5); }
+        :root { --primary-bg: #000814; --overlay: rgba(0, 0, 0, 0.6); }
         body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; color: white;
+            margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; color: white;
             transition: all 1s ease; min-height: 100vh; display: flex; flex-direction: column;
             align-items: center; background-size: cover; background-position: center; background-attachment: fixed;
+            background-color: var(--primary-bg);
         }
-        .work-theme { background-image: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1920'); background-color: #001f3f; }
-        .break-theme { background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920'); background-color: #2d5a27; }
+        /* Karanlık Samanyolu Teması */
+        .work-theme { 
+            background-image: url('https://images.unsplash.com/photo-1506318137071-a8e063b497a1?auto=format&fit=crop&w=1920&q=80'); 
+        }
+        .break-theme { 
+            background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80'); 
+        }
         .overlay { background: var(--overlay); width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; }
-        .main-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; width: 90%; max-width: 500px; margin-top: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
-        #timer { font-size: 90px; font-weight: bold; margin: 15px 0; font-family: 'Courier New', monospace; }
-        .controls input, select { padding: 8px; border-radius: 8px; border: none; margin: 5px; background: white; color: #333; }
-        .buttons button { background: white; color: #001f3f; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px; transition: 0.3s; }
-        .buttons button:hover { transform: scale(1.05); }
-        .extra-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 90%; max-width: 850px; margin-top: 25px; }
-        .tool-box { background: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        textarea { width: 100%; height: 100px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px; box-sizing: border-box; resize: none; }
+        
+        .main-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 30px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.15); text-align: center; width: 95%; max-width: 500px; margin-top: 20px; }
+        
+        /* Klasik Sayı Yazı Tipi */
+        #timer { 
+            font-size: 100px; 
+            font-weight: normal; 
+            margin: 15px 0; 
+            font-family: 'Times New Roman', Times, serif; 
+        }
+        
+        .controls input, select { padding: 8px; border-radius: 5px; border: none; margin: 5px; background: rgba(255,255,255,0.9); }
+        .buttons button { background: white; color: #001f3f; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin: 5px; font-family: sans-serif; transition: 0.3s; }
+        .buttons button:hover { opacity: 0.8; }
+        
+        .extra-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 95%; max-width: 850px; margin-top: 25px; }
+        .tool-box { background: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        textarea { width: 100%; height: 100px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; box-sizing: border-box; resize: none; font-family: sans-serif; }
+        
         #comet-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; }
-        .footer-widgets { margin-top: auto; padding: 25px; text-align: center; width: 100%; background: rgba(0,0,0,0.8); font-size: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .prayer-list { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 10px; color: #ffce00; font-weight: bold; }
+        .footer-widgets { margin-top: auto; padding: 25px; text-align: center; width: 100%; background: rgba(0,0,0,0.85); font-size: 14px; font-family: sans-serif; }
+        .prayer-list { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 10px; color: #ffce00; }
     </style>
 </head>
 <body class="work-theme" id="bodyTag">
@@ -36,11 +50,11 @@
     <canvas id="comet-canvas"></canvas>
 
     <div class="overlay">
-        <h1 id="status-text" style="font-size: 40px; margin-bottom: 5px;">İyi Çalışmalar</h1>
-        <p style="font-size: 18px; opacity: 0.9;">Tamamlanan Seans: <span id="pomo-count" style="color: #ffce00; font-weight: bold;">0</span></p>
+        <h1 id="status-text" style="font-weight: normal; letter-spacing: 2px;">İyi Çalışmalar</h1>
+        <p style="font-family: sans-serif; opacity: 0.8;">Tamamlanan Seans: <span id="pomo-count">0</span></p>
 
         <div class="main-card">
-            <div class="controls">
+            <div class="controls" style="font-family: sans-serif; font-size: 14px;">
                 Odaklanma: <input type="number" id="workInput" value="50"> 
                 Mola: <input type="number" id="breakInput" value="10">
             </div>
@@ -49,60 +63,76 @@
 
             <div class="buttons">
                 <button onclick="toggleTimer()" id="startBtn">Başlat</button>
-                <button onclick="resetTimer()" style="background: #ff4136; color: white;">Sıfırla</button>
+                <button onclick="resetTimer()" style="background: #800000; color: white;">Sıfırla</button>
                 <button onclick="toggleFullScreen()">Tam Ekran</button>
             </div>
 
-            <div class="audio-modes">
+            <div class="audio-modes" style="margin-top: 15px; font-family: sans-serif;">
                 <select id="soundSelect" onchange="changeSound()">
-                    <option value="none">🔇 Sessiz Mod</option>
-                    <option value="rain">🌧️ Yağmur Sesi</option>
-                    <option value="library">📚 Kütüphane Sesi</option>
+                    <option value="none">Sessiz Mod</option>
+                    <option value="rain">Yağmur Sesi</option>
+                    <option value="library">Kütüphane Sesi</option>
                 </select>
             </div>
         </div>
 
         <div class="extra-tools">
             <div class="tool-box">
-                <h3>✨ Motivasyon</h3>
-                <p id="mot-text">"Bugün yaptıkların, yarınki seni inşa eder."</p>
-                <button onclick="newQuote()" style="font-size: 11px; padding: 5px 10px;">Yeni Söz</button>
+                <h3 style="font-weight: normal; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">Motivasyon Kutusu</h3>
+                <p id="mot-text" style="font-style: italic; min-height: 50px;">"Zihin dinlenince çiçek açar."</p>
+                <button onclick="newQuote()" style="background: none; border: 1px solid white; color: white; padding: 5px 10px; cursor: pointer; border-radius: 5px;">Sözü Değiştir</button>
             </div>
             <div class="tool-box">
-                <h3>📝 Notlarım</h3>
-                <textarea id="notesArea" placeholder="Notlarınızı buraya yazabilirsiniz..."></textarea>
+                <h3 style="font-weight: normal; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">Notlarım</h3>
+                <textarea id="notesArea" placeholder="Notlarınızı buraya bırakın..."></textarea>
             </div>
         </div>
 
         <div class="footer-widgets">
-            <div id="clock" style="font-size: 20px; font-weight: bold;">00:00:00</div>
-            <div style="margin-top: 15px;">
-                Şehir Seçiniz: 
+            <div id="clock" style="font-size: 18px; margin-bottom: 10px;">00:00:00</div>
+            <div>
+                Şehir Seçimi: 
                 <select id="citySelect" onchange="getPrayerTimes()">
                     <option value="Konya">Konya</option>
                     <option value="Istanbul">İstanbul</option>
                     <option value="Ankara">Ankara</option>
                     <option value="Izmir">İzmir</option>
-                    <option value="Antalya">Antalya</option>
-                    <option value="Bursa">Bursa</option>
                 </select>
             </div>
-            <div id="prayer-times" class="prayer-list">Vakitler yükleniyor...</div>
+            <div id="prayer-times" class="prayer-list">Vakitler getiriliyor...</div>
         </div>
     </div>
+
+    <audio id="rainAudio" loop preload="auto">
+        <source src="https://www.soundjay.com/nature/rain-07.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="libraryAudio" loop preload="auto">
+        <source src="https://www.soundjay.com/misc/sounds/ambience-library-1.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         let timer;
         let timeLeft = 50 * 60;
         let isRunning = false;
         let isWorkTime = true;
-        let pomoSessionCount = 0;
+        let pomoCount = 0;
         let totalPomo = 0;
 
         const timerDisplay = document.getElementById('timer');
         const statusText = document.getElementById('status-text');
         const bodyTag = document.getElementById('bodyTag');
-        const pomoDisplay = document.getElementById('pomo-count');
+
+        function changeSound() {
+            const rain = document.getElementById('rainAudio');
+            const library = document.getElementById('libraryAudio');
+            const choice = document.getElementById('soundSelect').value;
+
+            rain.pause();
+            library.pause();
+
+            if(choice === 'rain') rain.play().catch(e => console.log("Lütfen önce sayfaya tıklayın"));
+            if(choice === 'library') library.play().catch(e => console.log("Lütfen önce sayfaya tıklayın"));
+        }
 
         function toggleTimer() {
             if (isRunning) {
@@ -118,28 +148,26 @@
         function countDown() {
             timeLeft--;
             updateDisplay();
-            if (timeLeft <= 0) handleSessionEnd();
-        }
-
-        function handleSessionEnd() {
-            clearInterval(timer);
-            isRunning = false;
-            if (isWorkTime) {
-                totalPomo++; pomoSessionCount++;
-                pomoDisplay.innerText = totalPomo;
-                if (pomoSessionCount % 2 === 0) startComets();
-                isWorkTime = false;
-                timeLeft = document.getElementById('breakInput').value * 60;
-                statusText.innerText = "Biraz Dinlen";
-                bodyTag.className = "break-theme";
-            } else {
-                isWorkTime = true;
-                timeLeft = document.getElementById('workInput').value * 60;
-                statusText.innerText = "İyi Çalışmalar";
-                bodyTag.className = "work-theme";
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                isRunning = false;
+                if (isWorkTime) {
+                    totalPomo++; pomoCount++;
+                    document.getElementById('pomo-count').innerText = totalPomo;
+                    if(pomoCount % 2 === 0) startComets();
+                    isWorkTime = false;
+                    timeLeft = document.getElementById('breakInput').value * 60;
+                    statusText.innerText = "Biraz Dinlen";
+                    bodyTag.className = "break-theme";
+                } else {
+                    isWorkTime = true;
+                    timeLeft = document.getElementById('workInput').value * 60;
+                    statusText.innerText = "İyi Çalışmalar";
+                    bodyTag.className = "work-theme";
+                }
+                updateDisplay();
+                document.getElementById('startBtn').innerText = "Başlat";
             }
-            updateDisplay();
-            document.getElementById('startBtn').innerText = "Başlat";
         }
 
         function updateDisplay() {
@@ -150,7 +178,8 @@
 
         function resetTimer() {
             clearInterval(timer);
-            isRunning = false; isWorkTime = true;
+            isRunning = false;
+            isWorkTime = true;
             timeLeft = document.getElementById('workInput').value * 60;
             updateDisplay();
             document.getElementById('startBtn').innerText = "Başlat";
@@ -160,15 +189,13 @@
 
         async function getPrayerTimes() {
             const city = document.getElementById('citySelect').value;
-            try {
-                const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Turkey&method=13`);
-                const data = await res.json();
-                const t = data.data.timings;
-                document.getElementById('prayer-times').innerHTML = `
-                    <span>İmsak: ${t.Fajr}</span> <span>Öğle: ${t.Dhuhr}</span> 
-                    <span>İkindi: ${t.Asr}</span> <span>Akşam: ${t.Maghrib}</span> <span>Yatsı: ${t.Isha}</span>
-                `;
-            } catch(e) { document.getElementById('prayer-times').innerText = "Vakitler şu an alınamıyor."; }
+            const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Turkey&method=13`);
+            const data = await res.json();
+            const t = data.data.timings;
+            document.getElementById('prayer-times').innerHTML = `
+                <span>İmsak: ${t.Fajr}</span> <span>Öğle: ${t.Dhuhr}</span> 
+                <span>İkindi: ${t.Asr}</span> <span>Akşam: ${t.Maghrib}</span> <span>Yatsı: ${t.Isha}</span>
+            `;
         }
         getPrayerTimes();
 
@@ -176,30 +203,14 @@
 
         function startComets() {
             const canvas = document.getElementById('comet-canvas');
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             let particles = [];
-            for(let i=0; i<15; i++) particles.push({x: Math.random()*canvas.width, y: -50, v: 12 + Math.random()*10});
+            for(let i=0; i<20; i++) particles.push({x: Math.random()*canvas.width, y: -50, v: 10 + Math.random()*10});
             let start = Date.now();
             function draw() {
                 ctx.clearRect(0,0,canvas.width, canvas.height);
-                ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 3;
+                ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 2;
                 particles.forEach(p => {
-                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - 50, p.y + 50); ctx.stroke();
-                    p.x += p.v; p.y += p.v;
-                });
-                if(Date.now() - start < 5000) requestAnimationFrame(draw);
-            }
-            draw();
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        }
-
-        const quotes = ["Başarı, hazırlıkla fırsatın karşılaştığı yerdir.", "Zihin dinlenince çiçek açar.", "Küçük adımlar büyük yollar açar.", "Derin odaklanma, başarının anahtarıdır."];
-        function newQuote() { document.getElementById('mot-text').innerText = quotes[Math.floor(Math.random() * quotes.length)]; }
-    </script>
-</body>
-</html>
+                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - 40, p.y + 40); ctx.stroke();
+                    p.
