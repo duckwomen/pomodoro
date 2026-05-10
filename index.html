@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melike'nin Odaklanma İstasyonu</title>
+    <style>
+        :root {
+            --primary-bg: #001f3f;
+            --overlay: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            transition: all 1s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Temalar */
+        .work-theme {
+            background-image: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1920');
+            background-color: #001f3f;
+        }
+        .break-theme {
+            background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920');
+            background-color: #2d5a27;
+        }
+
+        .overlay {
+            background: var(--overlay);
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Zamanlayıcı Kutusu */
+        .main-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            margin-top: 20px;
+        }
+
+        #timer { font-size: 80px; font-weight: bold; margin: 10px 0; }
+        
+        /* Ayarlar ve Kontroller */
+        .controls input {
+            width: 60px; padding: 5px; border-radius: 5px; border: none; text-align: center;
+        }
+        .buttons button {
+            background: white; color: black; border: none; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: bold; margin: 5px;
+        }
+
+        /* Notlarım ve Motivasyon */
+        .extra-tools {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            width: 90%; max-width: 800px; margin-top: 20px;
+        }
+        .tool-box {
+            background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 15px;
+        }
+        textarea {
+            width: 100%; height: 80px; background: transparent; color: white;
+            border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; resize: none;
+        }
+
+        /* Kuyruklu Yıldız Efekti */
+        #comet-canvas {
+            position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100;
+        }
+
+        /* Namaz ve Saat */
+        .footer-widgets {
+            margin-top: auto; padding: 20px; text-align: center; width: 100%;
+            background: rgba(0,0,0,0.6); font-size: 14px;
+        }
+
+        .audio-modes select {
+            margin-top: 10px; padding: 5px; border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="work-theme" id="bodyTag">
+
+    <canvas id="comet-canvas"></canvas>
+
+    <div class="overlay">
+        <h1 id="status-text">İyi Çalışmalar</h1>
+        <p>Tamamlanan Pomodoro: <span id="pomo-count">0</span></p>
+
+        <div class="main-card">
+            <div class="controls">
+                Çalışma: <input type="number" id="workInput" value="50"> 
+                Mola: <input type="number" id="breakInput" value="10">
+            </div>
+
+            <div id="timer">50:00</div>
+
+            <div class="buttons">
+                <button onclick="toggleTimer()" id="startBtn">Başlat</button>
+                <button onclick="resetTimer()">Sıfırla</button>
+                <button onclick="toggleFullScreen()">Tam Ekran</button>
+            </div>
+
+            <div class="audio-modes">
+                <select id="soundSelect" onchange="changeSound()">
+                    <option value="none">Sessiz Mod</option>
+                    <option value="rain">Yağmur Sesi</option>
+                    <option value="library">Kütüphane Sesi</option>
+                    <option value="custom">Şarkı (URL)</option>
+                </select>
+                <div id="customUrlInput" style="display:none; margin-top:5px;">
+                    <input type="text" id="songUrl" placeholder="Youtube/Müzik Linki" style="width:80%">
+                </div>
+            </div>
+        </div>
+
+        <div class="extra-tools">
+            <div class="tool-box">
+                <h3>Motivasyon Kartı</h3>
+                <p id="mot-text">"Zorluklar, başarının süsüdür."</p>
+                <button onclick="newQuote()" style="font-size: 12px;">Yeni Söz</button>
+            </div>
+            <div class="tool-box">
+                <h3>Notlarım</h3>
+                <textarea placeholder="Buraya not alabilirsin..."></textarea>
+            </div>
+        </div>
+
+        <div class="footer-widgets">
+            <div id="clock">Saat yükleniyor...</div>
+            <div id="prayer-times" style="margin-top:5px; color: #ddd;">
+                Namaz vakitleri için şehir seçiniz (API entegrasyonu gerekir)
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        let timeLeft = 50 * 60;
+        let isRunning = false;
+        let isWorkTime = true;
+        let pomoSessionCount = 0; // Arka arkaya sayım
+        let totalPomo = 0; // Günlük toplam
+
+        const timerDisplay = document.getElementById('timer');
+        const statusText = document.getElementById('status-text');
+        const bodyTag = document.getElementById('bodyTag');
+        const pomoDisplay = document.getElementById('pomo-count');
+
+        // Sesler (Örnek URL'ler)
+        const sounds = {
+            rain: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3'), // Temsili
+            library: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3')
+        };
+
+        function toggleTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                document.getElementById('startBtn').innerText = "Devam Et";
+            } else {
+                timer = setInterval(countDown, 1000);
+                document.getElementById('startBtn').innerText = "Durdur";
+            }
+            isRunning = !isRunning;
+        }
+
+        function countDown() {
+            timeLeft--;
+            updateDisplay();
+            if (timeLeft <= 0) {
+                handleSessionEnd();
+            }
+        }
+
+        function handleSessionEnd() {
+            clearInterval(timer);
+            isRunning = false;
+            
+            if (isWorkTime) {
+                totalPomo++;
+                pomoSessionCount++;
+                pomoDisplay.innerText = totalPomo;
+                
+                if (pomoSessionCount % 2 === 0) {
+                    startComets();
+                }
+
+                isWorkTime = false;
+                timeLeft = document.getElementById('breakInput').value * 60;
+                statusText.innerText = "Biraz Dinlen";
+                bodyTag.className = "break-theme";
+            } else {
+                isWorkTime = true;
+                timeLeft = document.getElementById('workInput').value * 60;
+                statusText.innerText = "İyi Çalışmalar";
+                bodyTag.className = "work-theme";
+            }
+            updateDisplay();
+            alert(isWorkTime ? "Çalışma Zamanı!" : "Mola Zamanı!");
+        }
+
+        function updateDisplay() {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            timerDisplay.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            isWorkTime = true;
+            timeLeft = document.getElementById('workInput').value * 60;
+            updateDisplay();
+            document.getElementById('startBtn').innerText = "Başlat";
+            bodyTag.className = "work-theme";
+            statusText.innerText = "İyi Çalışmalar";
+        }
+
+        // Motivasyon Sözleri
+        const quotes = [
+            "Gelecek, bugünden ona hazırlananlarındır.",
+            "Tıp sadece bir bilim değil, bir sanattır.",
+            "En büyük başarı, düştüğünde kalkabilmektir.",
+            "Bugün yaptıkların, yarınki seni inşa eder."
+        ];
+        function newQuote() {
+            document.getElementById('mot-text').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        }
+
+        // Saat
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // Tam Ekran
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Kuyruklu Yıldız Animasyonu
+        const canvas = document.getElementById('comet-canvas');
+        const ctx = canvas.getContext('2d');
+        function startComets() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particles = [];
+            for(let i=0; i<20; i++) {
+                particles.push({x: Math.random()*canvas.width, y: -50, v: 10 + Math.random()*10});
+            }
+            let startTime = Date.now();
+            function draw() {
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 2;
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p.x - 40, p.y + 40);
+                    ctx.stroke();
+                    p.x += p.v; p.y += p.v;
+                });
+                if(Date.now() - startTime < 5000) requestAnimationFrame(draw);
+                else ctx.clearRect(0,0,canvas.width, canvas.height);
+            }
+            draw();
+        }
+
+        // Ses Değişimi
+        function changeSound() {
+            const mode = document.getElementById('soundSelect').value;
+            // Tüm sesleri durdur
+            Object.values(sounds).forEach(s => { s.pause(); s.currentTime = 0; });
+            if(mode === 'rain') sounds.rain.play();
+            if(mode === 'library') sounds.library.play();
+            document.getElementById('customUrlInput').style.display = (mode === 'custom') ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
